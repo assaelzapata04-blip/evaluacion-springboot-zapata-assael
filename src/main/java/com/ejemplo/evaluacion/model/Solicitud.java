@@ -9,6 +9,10 @@ public class Solicitud {
     private String descripcion;
     private String estado = "PENDIENTE";
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
+
     public Solicitud() {}
 
     public Long getId() { return id; }
@@ -17,4 +21,6 @@ public class Solicitud {
     public void setDescripcion(String d) { this.descripcion = d; }
     public String getEstado() { return estado; }
     public void setEstado(String e) { this.estado = e; }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente c) { this.cliente = c; }
 }

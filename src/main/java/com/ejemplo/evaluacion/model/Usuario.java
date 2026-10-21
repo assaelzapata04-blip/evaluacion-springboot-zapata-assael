@@ -1,9 +1,18 @@
 package com.ejemplo.evaluacion.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 
 @Entity
-public class Usuario {
+@Inheritance(strategy = InheritanceType.JOINED)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "tipo")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Administrador.class, name = "ADMIN"),
+    @JsonSubTypes.Type(value = Empleado.class, name = "EMPLEADO"),
+    @JsonSubTypes.Type(value = Cliente.class, name = "CLIENTE")
+})
+public abstract class Usuario {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
@@ -18,4 +27,6 @@ public class Usuario {
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getCorreo() { return correo; }
     public void setCorreo(String correo) { this.correo = correo; }
+
+    public abstract String obtenerDescripcion();
 }
