@@ -5,7 +5,9 @@ import com.ejemplo.evaluacion.model.Solicitud;
 import com.ejemplo.evaluacion.model.Usuario;
 import com.ejemplo.evaluacion.repository.SolicitudRepository;
 import com.ejemplo.evaluacion.repository.UsuarioRepository;
+import com.ejemplo.evaluacion.service.GestorSolicitudes;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +19,13 @@ public class SolicitudController {
 
     private final SolicitudRepository repo;
     private final UsuarioRepository usuarioRepo;
+    private final GestorSolicitudes gestor;
 
-    public SolicitudController(SolicitudRepository repo, UsuarioRepository usuarioRepo) {
+    public SolicitudController(SolicitudRepository repo, UsuarioRepository usuarioRepo,
+                               GestorSolicitudes gestor) {
         this.repo = repo;
         this.usuarioRepo = usuarioRepo;
+        this.gestor = gestor;
     }
 
     @PostMapping
@@ -33,7 +38,23 @@ public class SolicitudController {
             return ResponseEntity.badRequest().body("El cliente no existe");
         }
         s.setCliente((Cliente) u);
+        Solicitud guardada = repo.save(s);
+        gestor.agregar(guardada);
+        return ResponseEntity.ok(guardada);
+    }
+
+    @PostMapping("/procesar")
+    public ResponseEntity<?> procesar() {
+        Solicitud s = gestor.procesarSiguiente();
+        if (s == null) {
+            return ResponseEntity.ok("No hay solicitudes en cola");
+        }
         return ResponseEntity.ok(repo.save(s));
+    }
+
+    @GetMapping("/historial")
+    public List<Solicitud> historial() {
+        return gestor.verHistorial();
     }
 
     @GetMapping
