@@ -3,6 +3,8 @@ package com.ejemplo.evaluacion.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -15,7 +17,12 @@ import jakarta.persistence.*;
 public abstract class Usuario {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "El nombre no puede estar vacío")
     private String nombre;
+
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "Correo inválido")
     private String correo;
 
     public Usuario() {}

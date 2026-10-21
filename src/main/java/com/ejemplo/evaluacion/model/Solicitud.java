@@ -1,12 +1,16 @@
 package com.ejemplo.evaluacion.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Solicitud {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "La descripción es obligatoria")
     private String descripcion;
+
     private String estado = "PENDIENTE";
 
     @ManyToOne
